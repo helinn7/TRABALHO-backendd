@@ -105,9 +105,14 @@ class CarrinhoController {
         res.status(200).json(carrinho);
     }
     async removerItem(req:Request, res:Response) {
-        const { produtoId , usuarioId } = req.body;
-        //Faça o removerItem
-        //Do melhor jeito
+        // aceita produtoId no body ou na rota (/carrinho/:produtoId)
+        const produtoId = req.body.produtoId ?? req.params.produtoId;
+        // usuarioId preferencialmente vem do token (req.usuarioId) — compatível com Auth middleware
+        // (quando este controller for usado sem Auth, aceita usuarioId no body)
+        // @ts-ignore
+        const usuarioId = req.body.usuarioId ?? (req as any).usuarioId;
+
+        if(!produtoId) return res.status(400).json({mensagem: 'produtoId é obrigatório'});
 
         const carrinho = await db.collection<Carrinho>("carrinhos").findOne({usuarioId: usuarioId});
         if(!carrinho){
@@ -137,7 +142,17 @@ class CarrinhoController {
 
     }
     async atualizarQuantidade(req:Request, res:Response) {
-        const { produtoId , usuarioId, quantidade  } = req.body;
+        // aceita produtoId no body ou na rota (/carrinho/:produtoId/quantidade)
+        const produtoId = req.body.produtoId ?? req.params.produtoId;
+        // @ts-ignore
+        const usuarioId = req.body.usuarioId ?? (req as any).usuarioId;
+        // quantidade pode vir no body como 'quantidade' ou via query/params
+        let quantidade = req.body.quantidade ?? req.query.quantidade ?? req.params.quantidade;
+        quantidade = typeof quantidade === 'string' ? parseInt(quantidade) : quantidade;
+
+        if(!produtoId) return res.status(400).json({mensagem: 'produtoId é obrigatório'});
+        if(typeof quantidade !== 'number' || Number.isNaN(quantidade)) return res.status(400).json({mensagem: 'quantidade inválida'});
+
         const carrinho = await db.collection<Carrinho>("carrinhos").findOne({usuarioId: usuarioId});
         if(!carrinho){
             return res.status(404).json({mensagem: 'Carrinho não encontrado'});

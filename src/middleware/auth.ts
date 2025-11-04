@@ -4,7 +4,7 @@ import {Request, Response, NextFunction} from 'express'
 
 interface RequestAuth extends Request{
     usuarioId?:string
-    role?: string
+    tipo?: string
 }
 
 function Auth(req:RequestAuth,res:Response,next:NextFunction){
@@ -20,8 +20,9 @@ function Auth(req:RequestAuth,res:Response,next:NextFunction){
         if(!decoded || typeof decoded === 'string' || !('usuarioId' in decoded))
             return res.status(401).json({mensagem:"Payload inválido!"})
 
-        req.usuarioId = decoded.usuarioId;
-        req.role = decoded.role ?? 'user';
+    req.usuarioId = decoded.usuarioId;
+    // suporta tanto 'role' quanto 'tipo' no payload
+    req.tipo = (decoded.tipo ?? decoded.role ?? 'user').toString().toUpperCase();
         next()
 
     })

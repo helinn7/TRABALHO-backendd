@@ -4,12 +4,13 @@ import jwt from 'jsonwebtoken'
 
 interface RequestAuth extends Request{
     usuarioId?: string
-    role?: string
+    tipo?: string
 }
 
 const adminAuth = (req: RequestAuth, res: Response, next: NextFunction) => {
   // auth middleware must run before this and set req.role
-  if (req.role !== 'admin' && req.role !== 'ADMIN') {
+  const tipo = (req.tipo ?? '').toString().toUpperCase()
+  if (tipo !== 'ADMIN') {
     return res.status(403).json({ message: 'Acesso apenas para administradores' });
   }
   next();

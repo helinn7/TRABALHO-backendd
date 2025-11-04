@@ -39,9 +39,12 @@ class UsuarioController {
         if(!senhaValida)
             return res.status(400).json({mensagem:"Senha Inválida!"})
     //criar um TOKEN contendo o id e o role do usuário
-    const token = jwt.sign({usuarioId:usuario._id, role: usuario.role ?? 'user'}, process.env.JWT_SECRET!,{expiresIn:'1h'})
-    //Devolver token e role (frontend can store both)
-    res.status(200).json({token, role: usuario.role ?? 'user'})
+    // padroniza tipo para ADMIN/USER
+    const tipo = (usuario.role ?? 'user').toString().toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER'
+    // criar token contendo o id e o tipo do usuário
+    const token = jwt.sign({usuarioId: usuario._id, tipo}, process.env.JWT_SECRET!, { expiresIn: '2h' })
+    // Devolver token e tipo (compatibiliza com 'role' existente)
+    res.status(200).json({ token, tipo, role: usuario.role ?? 'user' })
     }
 }
 export default new UsuarioController();
