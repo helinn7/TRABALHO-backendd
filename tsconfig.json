@@ -2,7 +2,7 @@
   "compilerOptions": {
     // Diretórios
     "rootDir": "./src",
-    "outDir": "./dist",
+    "outDir": "../../Downloads/TRABALHO-frontend-main/dist",
 
     // Ambiente Node moderno
     "module": "nodenext",
