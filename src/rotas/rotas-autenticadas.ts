@@ -23,18 +23,24 @@ rotasAutenticadas.delete('/produtos/:id', adminAuth, produtoController.remover);
 
 // Rotas de carrinho
 rotasAutenticadas.post("/adicionarItem", carrinhoController.adicionarItem);
-// remove a single item from cart (by body)
-rotasAutenticadas.delete("/carrinho/item", carrinhoController.removerItem);
-// update quantity for an item (body)
-rotasAutenticadas.patch("/carrinho/quantidade", carrinhoController.atualizarQuantidade);
-// alternativas RESTful com params
-rotasAutenticadas.put('/carrinho/:produtoId/quantidade', carrinhoController.atualizarQuantidade);
-rotasAutenticadas.delete('/carrinho/:produtoId', carrinhoController.remover);
-// get the current user's cart
+// adicionar item
+rotasAutenticadas.post("/adicionarItem", carrinhoController.adicionarItem);
+
+// obter o carrinho do usuário atual
 rotasAutenticadas.get("/carrinho", carrinhoController.listar);
-// remove entire cart (admin can pass usuarioId via body)
-rotasAutenticadas.delete("/carrinho", carrinhoController.remover);
-// admin route to remove any user's cart by id (usuarioId)
+
+// atualizar quantidade de um item (aceita body { produtoId, quantidade } ou param produtoId)
+rotasAutenticadas.put('/carrinho/:produtoId/quantidade', carrinhoController.atualizarQuantidade);
+rotasAutenticadas.patch('/carrinho/quantidade', carrinhoController.atualizarQuantidade);
+
+// remover um item do carrinho (por produtoId)
+rotasAutenticadas.delete('/carrinho/item', carrinhoController.removerItem); // aceita body
+rotasAutenticadas.delete('/carrinho/:itemId', carrinhoController.removerItem); // aceita param
+
+// esvaziar o carrinho do usuário atual
+rotasAutenticadas.delete('/carrinho', carrinhoController.remover);
+
+// admin route to remove any user's cart by usuarioId (params)
 rotasAutenticadas.delete('/admin/carrinho/:id', adminAuth, carrinhoController.remover);
 
 export default rotasAutenticadas;

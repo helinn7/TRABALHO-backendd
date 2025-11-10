@@ -221,5 +221,46 @@ class CarrinhoController {
         }
     }
 
+    // Lista todos os carrinhos com o nome do usuário dono (rotas admin)
+    async listarTodos(req: RequestAuth, res: Response) {
+        try {
+            // Buscar todos os carrinhos
+            const carrinhos = await db.collection<any>("carrinhos").find().toArray();
+
+            // Buscar todos os usuários (pequeno tradeoff de performance, simples e robusto)
+            const usuarios = await db.collection<any>("usuarios").find().toArray();
+
+            const resultado = carrinhos.map((c: any) => {
+                // tentar encontrar o usuário por comparação de _id
+                let usuarioNome: string | null = null;
+                try {
+                    const encontrado = usuarios.find(u => {
+                        // compara as representações string das possíveis formas
+                        const uid = u._id ? u._id.toString() : String(u._id);
+                        const cid = c.usuarioId ? c.usuarioId.toString() : String(c.usuarioId);
+                        return uid === cid;
+                    });
+                    if (encontrado) usuarioNome = encontrado.nome ?? null;
+                } catch (e) {
+                    // ignore
+                }
+
+                return {
+                    _id: c._id,
+                    usuarioId: c.usuarioId,
+                    usuarioNome,
+                    itens: c.itens,
+                    total: c.total,
+                    dataAtualizacao: c.dataAtualizacao
+                };
+            });
+
+            return res.status(200).json(resultado);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ mensagem: 'Erro ao listar todos os carrinhos' });
+        }
+    }
+
 }
 export default new CarrinhoController();
