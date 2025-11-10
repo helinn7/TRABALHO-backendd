@@ -1,35 +1,18 @@
 {
   "compilerOptions": {
-    // Diretórios
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "outDir": "./dist",
     "rootDir": "./src",
-    "outDir": "../../Downloads/TRABALHO-frontend-main/dist",
-
-    // Ambiente Node moderno
-    "module": "nodenext",
-    "target": "esnext",
-    "moduleResolution": "nodenext",
-
-    // Tipos e libs
-    "types": ["node"],
-    "lib": ["esnext"],
-
-    // Mapas e declarações
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Opções de segurança e boas práticas
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Configurações diversas
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": false,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "types": ["node"]
   },
-  "include": ["src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

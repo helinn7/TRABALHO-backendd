@@ -8,17 +8,34 @@ dotenv.config();
 
 // Check if environment variables are defined
 if (!process.env.MONGO_URI) {
-    throw new Error('MONGO_URI não está definida nas variáveis de ambiente');
+    throw new Error('MONGO_URI não está definida nas variáveis de ambiente. Crie um arquivo .env com MONGO_URI');
 }
 
-if (!process.env.MONGO_DB) {
-    throw new Error('MONGO_DB não está definida nas variáveis de ambiente');
-}
-
-// Create MongoDB client and connect
+// Create MongoDB client
 const client = new MongoClient(process.env.MONGO_URI);
-await client.connect();
-const db = client.db(process.env.MONGO_DB);
+const dbName = process.env.MONGO_DB || 'ecommerce';
+let db = client.db(dbName);
+
+// Connect to MongoDB
+client.connect()
+    .then(() => {
+        console.log('Conectado ao MongoDB com sucesso!');
+        db = client.db(dbName);
+    })
+    .catch((error) => {
+        console.error('Erro ao conectar ao MongoDB:', error);
+        process.exit(1);
+    });
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    client.close()
+        .then(() => {
+            console.log('Conexão com MongoDB fechada');
+            process.exit(0);
+        })
+        .catch(console.error);
+});
 
 export { db };
 export type Role = 'admin' | 'user';
