@@ -124,3 +124,4 @@ await db.collection('carrinhos').deleteOne({ usuarioId });
    - Evitar race conditions em atualizações de carrinho
 
 [Prints do MongoDB Compass/Atlas serão adicionados aqui]
+
